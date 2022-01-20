@@ -4,18 +4,19 @@ import android.content.Context
 import android.view.View
 import com.example.dictionary.datasource.DataSourceRemote
 import com.example.dictionary.model.data.AppState
-import com.example.dictionary.model.repository.RepositoryImpl
+import com.example.dictionary.model.repository.RepositoryImplementation
 import com.example.dictionary.model.scheduler.MySchedulers
 import com.example.dictionary.model.scheduler.MySchedulersImpl
 import com.example.dictionary.presenter.Presenter
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.observers.DisposableObserver
 
+
 abstract class MainPresenter<T : AppState, V : View>(
     private val context: Context,
     private val interactor: MainInteractor = MainInteractor(
         context,
-        RepositoryImpl(DataSourceRemote())
+        RepositoryImplementation(DataSourceRemote())
     ),
     private val compositeDisposable: CompositeDisposable = CompositeDisposable(),
     private val schedulers: MySchedulers = MySchedulersImpl()
@@ -36,12 +37,14 @@ abstract class MainPresenter<T : AppState, V : View>(
     }
 
     override fun getData(word: String, isOnline: Boolean) {
-        compositeDisposable += interactor
-            .getData(word, isOnline)
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.main())
-            .doOnSubscribe { currentView?.renderData(AppState.Loading(null)) }
-            .subscribeWith(getObserver())
+        with(compositeDisposable) {
+            add(
+                interactor.getData(word, isOnline)
+                    .subscribeOn(schedulers.io())
+                    .observeOn(schedulers.main())
+                    .doOnSubscribe { currentView?.renderData(AppState.Loading(null)) }
+                    .subscribeWith(getObserver()))
+        }
     }
 
     private fun getObserver(): DisposableObserver<AppState> {
@@ -60,6 +63,6 @@ abstract class MainPresenter<T : AppState, V : View>(
     }
 }
 
-private fun View?.renderData(loading: AppState.Loading) {
+private fun View?.renderData(loading: AppState) {
 
 }

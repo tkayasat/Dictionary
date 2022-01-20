@@ -7,7 +7,7 @@ import com.example.dictionary.presenter.Presenter
 
 abstract class BaseActivity<T : AppState> : AppCompatActivity(), View {
 
-    protected open lateinit var presenter: Presenter<T, View>
+    protected lateinit var presenter: Presenter<T, View>
 
     protected abstract fun createPresenter(): Presenter<T, View>
 
@@ -24,7 +24,7 @@ abstract class BaseActivity<T : AppState> : AppCompatActivity(), View {
     }
 
     override fun onStop() {
-        presenter.detachView(this)
         super.onStop()
+        presenter.detachView(this)
     }
 }
