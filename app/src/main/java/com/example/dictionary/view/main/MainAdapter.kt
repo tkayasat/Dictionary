@@ -13,6 +13,8 @@ class MainAdapter(
     private var data: List<DataPresenterRU>
 ) :
     RecyclerView.Adapter<MainItemViewHolder>() {
+
+
     fun setData(data: List<DataPresenterRU>) {
         this.data = data
         notifyDataSetChanged()

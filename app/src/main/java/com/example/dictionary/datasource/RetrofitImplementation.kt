@@ -11,7 +11,7 @@ import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.sql.DataSource
 
-class RetrofitImplementation: DataSource<List<DataModel>>  {
+class RetrofitImplementation : DataSource<List<DataModel>>{
     companion object {
         private const val BASE_URL_LOCATIONS =
             "https://dictionary.skyeng.ru/api/public/v1/"
@@ -20,9 +20,8 @@ class RetrofitImplementation: DataSource<List<DataModel>>  {
     fun getData(word: String): Observable<List<DataModel>> =
         getService(BaseInterceptor.interceptor).search(word)
 
-    private fun getService(interceptor: Interceptor): ApiService {
-        return createRetrofit(interceptor).create(ApiService::class.java)
-    }
+    private fun getService(interceptor: Interceptor): ApiService =
+        createRetrofit(interceptor).create(ApiService::class.java)
 
     private fun createOkHttpClient(interceptor: Interceptor): OkHttpClient {
         val httpClient = OkHttpClient.Builder()

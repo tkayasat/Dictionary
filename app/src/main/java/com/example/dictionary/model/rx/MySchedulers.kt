@@ -1,4 +1,4 @@
-package com.example.dictionary.model.scheduler
+package com.example.dictionary.model.rx
 
 import io.reactivex.rxjava3.core.Scheduler
 

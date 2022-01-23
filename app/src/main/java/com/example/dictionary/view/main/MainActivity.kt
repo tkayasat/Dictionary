@@ -1,24 +1,26 @@
 package com.example.dictionary.view.main
 
-
 import android.os.Bundle
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dictionary.R
 import com.example.dictionary.databinding.ActivityMainBinding
 import com.example.dictionary.model.data.AppState
 import com.example.dictionary.presenter.DataPresenterRU
-import com.example.dictionary.presenter.Presenter
 import com.example.dictionary.view.common.BaseActivity
 import com.example.dictionary.view.common.OnListItemClickListener
 import com.example.dictionary.view.common.OnSearchClickListener
 
-class MainActivity : BaseActivity<AppState>() {
+class MainActivity : BaseActivity<AppState, MainInteractor>() {
+
     private lateinit var binding: ActivityMainBinding
     private var adapter: MainAdapter? = null
+    private val observer = Observer<AppState> { renderData(it) }
+
 
     private val onListItemClickListener: OnListItemClickListener =
         object : OnListItemClickListener {
@@ -30,8 +32,8 @@ class MainActivity : BaseActivity<AppState>() {
             }
         }
 
-    override fun createPresenter(): Presenter<AppState, View> {
-        return MainPresenter(baseContext)
+    override val model: MainViewModel by lazy {
+        ViewModelProvider(this).get(MainViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,13 +45,22 @@ class MainActivity : BaseActivity<AppState>() {
             searchDialogFragment.setOnSearchClickListener(object :
                 OnSearchClickListener {
                 override fun onClick(searchWord: String) {
-                    presenter.getData(searchWord, true)
+                    if (isNetworkAvailable) {
+                        model.getData(searchWord, isNetworkAvailable)
+                            .observe(this@MainActivity, observer)
+                    } else {
+                        showNoInternetConnectionDialog()
+                        model.getData().observe(this@MainActivity, observer)
+                    }
                 }
             })
             searchDialogFragment.show(
                 supportFragmentManager,
                 SearchDialogFragment.TAG
             )
+        }
+        if (savedInstanceState != null) {
+            model.getData().observe(this@MainActivity, observer)
         }
     }
 
@@ -92,7 +103,7 @@ class MainActivity : BaseActivity<AppState>() {
         showViewError()
         binding.errorTextview.text = error ?: getString(R.string.undefined_error)
         binding.reloadButton.setOnClickListener {
-            presenter.getData("hi", true)
+            model.getData("Hello!").observe(this, observer)
         }
     }
 

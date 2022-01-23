@@ -7,8 +7,5 @@ import javax.sql.DataSource
 
 class RepositoryImplementation(private val dataSource: DataSource<List<DataModel>>) :
     Repository<List<DataModel>> {
-
-    override fun getData(word: String): Observable<List<DataModel>> {
-        return dataSource.getData(word)
-    }
+    override fun getData(word: String): Observable<List<DataModel>> = dataSource.getData(word)
 }

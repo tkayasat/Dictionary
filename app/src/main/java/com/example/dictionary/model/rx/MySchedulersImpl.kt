@@ -1,6 +1,5 @@
-package com.example.dictionary.model.scheduler
+package com.example.dictionary.model.rx
 
-import com.example.dictionary.model.scheduler.MySchedulers
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.schedulers.Schedulers
